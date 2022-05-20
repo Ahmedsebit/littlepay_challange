@@ -6,7 +6,6 @@ from flask_api import FlaskAPI
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_swagger_ui import get_swaggerui_blueprint
-from app.utils.exceptions import ResponseError
 
 
 db = SQLAlchemy()
@@ -15,8 +14,7 @@ migrate = Migrate(db)
 ### swagger specific ###
 SWAGGER_URL = '/api/littlepay/swagger'
 API_URL = '/static/swagger.json'
-URL_PREFIX = '/api/littlepay/v1'
-URL_PREFIX_V2 = '/api/littlepay/v2'
+URL_PREFIX = '/api/littlepay'
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
@@ -45,21 +43,12 @@ def create_app(config_name):
     log_level = logging.INFO
     app.logger.setLevel(log_level)
     
-    import app.controllers as api_v1
+    import app.controllers.trips as api_v1
     
     db.init_app(app)
     
     app.register_blueprint(api_v1.littlepay_bp, url_prefix=URL_PREFIX)
     app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-
-    @app.errorhandler(Exception)
-    def handle_error(e):
-        logger.error(f"Littlepay - {type(e).__name__}: {str(e)}")
-
-        if isinstance(e, ResponseError):
-            return jsonify(**e.__dict__), e.status
-
-        return jsonify(dict(detail=f"{type(e).__name__}: {str(e)}")), 500
     
     @app.teardown_request
     def teardown_request(exception):
