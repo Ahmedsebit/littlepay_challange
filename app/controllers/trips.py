@@ -1,6 +1,5 @@
-from flask import Blueprint, request, jsonify
-from app.utils.upload_file import charge_trip, read_file, get_duration, get_charge, get_status, generate_output_file
-from app.models.trips import Trip
+from flask import Blueprint, request
+from app.utils.upload_file import charge_trip, read_file, generate_output_file
 
 
 littlepay_bp = Blueprint(
@@ -10,7 +9,20 @@ littlepay_bp = Blueprint(
 
 @littlepay_bp.route('/trips/upload', methods=['POST'])
 def upload_trips_api():
-    data = request.data
+    """
+    post endpoint
+    ---
+    tags:
+      - trips
+    parameters:
+      - name: file
+        in: formData
+        required: true
+        type: file
+    responses:
+      200:
+        description: Generate charges from an uploaded trip file
+    """
     file = request.files.get('file')
     trips = read_file(file)
     charged_trip = charge_trip(trips)
