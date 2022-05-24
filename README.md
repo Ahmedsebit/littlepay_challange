@@ -1,5 +1,10 @@
 # littlepay_challange
 
+# Assumptions
+- The tap ON/OFF in a csv are from the same device, hence also from the same bus with the same bus_id
+- A user can use the same bus during the day so the can have mmultiple taps ON/OFF in the same device 
+
+
 ## Installation
 - Clone repository `git clone https://github.com/Ahmedsebit/littlepay_challange.git`
 - Install virtualenv `pip install virtualenv`

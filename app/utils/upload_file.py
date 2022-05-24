@@ -26,9 +26,12 @@ def read_file(file):
         
         
         if trip.pan in trips_d:
-            trips_d[trip.pan][trip.tap_type]=trip
+            if trip.tap_type == 'ON':
+                trips_d[trip.pan].append({trip.tap_type:trip})
+            else:
+                trips_d[trip.pan][-1][trip.tap_type]=trip
         else:
-            trips_d[trip.pan] = {trip.tap_type:trip}
+            trips_d[trip.pan] = [{trip.tap_type:trip}]
     
     return trips_d
 
@@ -36,24 +39,25 @@ def read_file(file):
 def charge_trip(trips):
 
     charges = []
-    for key, value in trips.items():
-        
-        boarded = value.get('ON')
-        alight = value.get('OFF')
-        
-        charge = {}
-        charge["Started"] = boarded.date_time_utc
-        charge["Finished"] = alight.date_time_utc if alight else None
-        charge["DurationSecs"] = get_duration(boarded, alight)
-        charge["FromStopId"] = boarded.stop_id
-        charge["ToStopId"] = alight.stop_id if alight else None
-        charge["ChargeAmount"] = get_charge(boarded, alight)
-        charge["CompanyId"] = boarded.company_id
-        charge["BusID"] = boarded.bus_id
-        charge["PAN"] = key
-        charge["Status"] = get_status(boarded, alight)
-        
-        charges.append(charge)
+    for key, taps in trips.items():
+        for tap in taps:
+            
+            boarded = tap.get('ON')
+            alight = tap.get('OFF')
+            
+            charge = {}
+            charge["Started"] = boarded.date_time_utc
+            charge["Finished"] = alight.date_time_utc if alight else None
+            charge["DurationSecs"] = get_duration(boarded, alight)
+            charge["FromStopId"] = boarded.stop_id
+            charge["ToStopId"] = alight.stop_id if alight else None
+            charge["ChargeAmount"] = get_charge(boarded, alight)
+            charge["CompanyId"] = boarded.company_id
+            charge["BusID"] = boarded.bus_id
+            charge["PAN"] = key
+            charge["Status"] = get_status(boarded, alight)
+            
+            charges.append(charge)
 
     return charges
 

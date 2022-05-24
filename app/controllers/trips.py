@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.utils.upload_file import charge_trip, read_file, generate_output_file
+# from app.utils.upload_file import charge_trip, read_file, generate_output_file
 
 
 littlepay_bp = Blueprint(
@@ -23,8 +23,8 @@ def upload_trips_api():
       200:
         description: Generate charges from an uploaded trip file
     """
-    file = request.files.get('file')
-    trips = read_file(file)
-    charged_trip = charge_trip(trips)
-    output_file = generate_output_file(charged_trip)
-    return output_file
+    # file = request.files.get('file')
+    # trips = read_file(file)
+    # charged_trip = charge_trip(trips)
+    # output_file = generate_output_file(charged_trip)
+    return 'output_file'
